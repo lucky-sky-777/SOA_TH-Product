@@ -1,30 +1,31 @@
 package com.thienbao.soa_th_product.auth.service;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 @Service
 public class AuthService {
 
-	private final RestClient restClient;
-
-	public AuthService() {
-		this.restClient = RestClient.builder()
-				.baseUrl("http://localhost:9090")
-				.build();
-	}
+	RestClient authRestClient;
 
 	public boolean validate(String token) {
 		try {
-			restClient.get()
+			authRestClient.get()
 					.uri("/api/auth/validate")
 					.header("Authorization", token)
 					.retrieve()
 					.toBodilessEntity();
 
 			return true;
-		} catch (Exception e) {
+		} catch (RestClientResponseException e) {
 			return false;
 		}
 	}
+
 }
